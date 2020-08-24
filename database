@@ -56,10 +56,77 @@ ALTER SEQUENCE public.candidates_id_seq OWNED BY public.candidates.id;
 
 
 --
+-- Name: votes; Type: TABLE; Schema: public; Owner: paulheo
+--
+
+CREATE TABLE public.votes (
+    id integer NOT NULL,
+    candidate_id integer,
+    precinct_id integer,
+    count integer
+);
+
+
+ALTER TABLE public.votes OWNER TO paulheo;
+
+--
+-- Name: votes_id_seq; Type: SEQUENCE; Schema: public; Owner: paulheo
+--
+
+CREATE SEQUENCE public.votes_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.votes_id_seq OWNER TO paulheo;
+
+--
+-- Name: votes_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: paulheo
+--
+
+ALTER SEQUENCE public.votes_id_seq OWNED BY public.votes.id;
+
+
+--
 -- Name: candidates id; Type: DEFAULT; Schema: public; Owner: paulheo
 --
 
 ALTER TABLE ONLY public.candidates ALTER COLUMN id SET DEFAULT nextval('public.candidates_id_seq'::regclass);
+
+
+--
+-- Name: votes id; Type: DEFAULT; Schema: public; Owner: paulheo
+--
+
+ALTER TABLE ONLY public.votes ALTER COLUMN id SET DEFAULT nextval('public.votes_id_seq'::regclass);
+
+
+--
+-- Name: candidates candidates_pkey; Type: CONSTRAINT; Schema: public; Owner: paulheo
+--
+
+ALTER TABLE ONLY public.candidates
+    ADD CONSTRAINT candidates_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: votes votes_pkey; Type: CONSTRAINT; Schema: public; Owner: paulheo
+--
+
+ALTER TABLE ONLY public.votes
+    ADD CONSTRAINT votes_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: votes votes_candidate_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: paulheo
+--
+
+ALTER TABLE ONLY public.votes
+    ADD CONSTRAINT votes_candidate_id_fkey FOREIGN KEY (candidate_id) REFERENCES public.candidates(id);
 
 
 --
