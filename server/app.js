@@ -1,6 +1,7 @@
 var express = require('express');
 var app = express();
 var candidates = require('./routes/candidates.js')
+var votes = require('./routes/votes.js')
 
 // Parse URL-encoded bodies (as sent by HTML forms)
 app.use(express.urlencoded());
@@ -10,6 +11,7 @@ app.use(express.json());
 
 // Routes
 app.use('/candidates', candidates);
+app.use('/votes',votes);
 
 var PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
