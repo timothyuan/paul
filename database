@@ -21,7 +21,24 @@ SET default_tablespace = '';
 SET default_table_access_method = heap;
 
 --
--- Name: candidates; Type: TABLE; Schema: public; Owner: timothyyuan
+-- Name: age; Type: TABLE; Schema: public; Owner: paulheo
+--
+
+CREATE TABLE public.age (
+    precinct_id numeric NOT NULL,
+    a integer NOT NULL,
+    b integer NOT NULL,
+    c integer NOT NULL,
+    d integer NOT NULL,
+    e integer NOT NULL,
+    unknown integer NOT NULL
+);
+
+
+ALTER TABLE public.age OWNER TO paulheo;
+
+--
+-- Name: candidates; Type: TABLE; Schema: public; Owner: paulheo
 --
 
 CREATE TABLE public.candidates (
@@ -31,10 +48,10 @@ CREATE TABLE public.candidates (
 );
 
 
-ALTER TABLE public.candidates OWNER TO timothyyuan;
+ALTER TABLE public.candidates OWNER TO paulheo;
 
 --
--- Name: candidates_id_seq; Type: SEQUENCE; Schema: public; Owner: timothyyuan
+-- Name: candidates_id_seq; Type: SEQUENCE; Schema: public; Owner: paulheo
 --
 
 CREATE SEQUENCE public.candidates_id_seq
@@ -46,17 +63,62 @@ CREATE SEQUENCE public.candidates_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.candidates_id_seq OWNER TO timothyyuan;
+ALTER TABLE public.candidates_id_seq OWNER TO paulheo;
 
 --
--- Name: candidates_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: timothyyuan
+-- Name: candidates_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: paulheo
 --
 
 ALTER SEQUENCE public.candidates_id_seq OWNED BY public.candidates.id;
 
 
 --
--- Name: votes; Type: TABLE; Schema: public; Owner: timothyyuan
+-- Name: precincts; Type: TABLE; Schema: public; Owner: paulheo
+--
+
+CREATE TABLE public.precincts (
+    id numeric NOT NULL,
+    city character varying(30) NOT NULL,
+    county character varying(30) NOT NULL
+);
+
+
+ALTER TABLE public.precincts OWNER TO paulheo;
+
+--
+-- Name: race; Type: TABLE; Schema: public; Owner: paulheo
+--
+
+CREATE TABLE public.race (
+    precinct_id numeric NOT NULL,
+    african_american integer NOT NULL,
+    asian integer NOT NULL,
+    caucasian integer NOT NULL,
+    hispanic integer NOT NULL,
+    native_american integer NOT NULL,
+    uncoded integer NOT NULL,
+    unknown integer NOT NULL
+);
+
+
+ALTER TABLE public.race OWNER TO paulheo;
+
+--
+-- Name: sex; Type: TABLE; Schema: public; Owner: paulheo
+--
+
+CREATE TABLE public.sex (
+    precinct_id numeric NOT NULL,
+    male integer NOT NULL,
+    female integer NOT NULL,
+    unknown integer NOT NULL
+);
+
+
+ALTER TABLE public.sex OWNER TO paulheo;
+
+--
+-- Name: votes; Type: TABLE; Schema: public; Owner: paulheo
 --
 
 CREATE TABLE public.votes (
@@ -67,10 +129,10 @@ CREATE TABLE public.votes (
 );
 
 
-ALTER TABLE public.votes OWNER TO timothyyuan;
+ALTER TABLE public.votes OWNER TO paulheo;
 
 --
--- Name: votes_id_seq; Type: SEQUENCE; Schema: public; Owner: timothyyuan
+-- Name: votes_id_seq; Type: SEQUENCE; Schema: public; Owner: paulheo
 --
 
 CREATE SEQUENCE public.votes_id_seq
@@ -82,31 +144,91 @@ CREATE SEQUENCE public.votes_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.votes_id_seq OWNER TO timothyyuan;
+ALTER TABLE public.votes_id_seq OWNER TO paulheo;
 
 --
--- Name: votes_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: timothyyuan
+-- Name: votes_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: paulheo
 --
 
 ALTER SEQUENCE public.votes_id_seq OWNED BY public.votes.id;
 
 
 --
--- Name: candidates id; Type: DEFAULT; Schema: public; Owner: timothyyuan
+-- Name: candidates id; Type: DEFAULT; Schema: public; Owner: paulheo
 --
 
 ALTER TABLE ONLY public.candidates ALTER COLUMN id SET DEFAULT nextval('public.candidates_id_seq'::regclass);
 
 
 --
--- Name: votes id; Type: DEFAULT; Schema: public; Owner: timothyyuan
+-- Name: votes id; Type: DEFAULT; Schema: public; Owner: paulheo
 --
 
 ALTER TABLE ONLY public.votes ALTER COLUMN id SET DEFAULT nextval('public.votes_id_seq'::regclass);
 
 
 --
--- Data for Name: candidates; Type: TABLE DATA; Schema: public; Owner: timothyyuan
+-- Data for Name: age; Type: TABLE DATA; Schema: public; Owner: paulheo
+--
+
+COPY public.age (precinct_id, a, b, c, d, e, unknown) FROM stdin;
+832800	86	134	215	238	191	0
+832810	92	146	201	230	157	0
+832900	72	132	198	242	194	0
+833000	83	159	201	176	136	0
+833100	61	118	159	202	142	0
+833200	68	105	190	192	173	0
+833210	83	157	205	258	162	0
+833300	70	121	223	236	173	0
+833410	144	124	368	322	180	0
+833500	94	100	219	229	156	0
+833610	94	90	111	175	101	0
+833700	120	143	238	286	111	0
+833710	111	131	223	228	151	0
+835310	101	207	340	254	283	0
+835800	80	276	251	231	141	0
+835820	41	225	238	160	118	0
+835910	67	175	272	229	178	0
+836110	131	77	173	290	182	0
+836200	101	84	118	231	200	0
+836500	145	136	240	333	165	0
+836600	110	92	211	248	159	0
+836700	57	71	103	145	76	0
+837100	192	132	278	435	189	0
+837200	103	92	193	222	159	0
+837400	140	133	250	391	269	0
+837500	98	113	274	290	193	0
+837600	158	151	250	405	292	0
+837700	180	142	242	409	234	0
+837710	96	108	127	278	164	0
+838000	97	119	189	289	271	0
+838110	88	88	200	266	193	0
+838300.01	39	34	122	104	85	0
+838500.01	52	39	131	132	94	0
+838600	96	107	268	234	143	0
+838700	133	110	323	319	184	0
+839530	64	76	105	206	162	0
+850300	69	146	185	238	226	0
+850330	63	185	310	279	173	0
+850400	59	96	199	212	175	0
+850500	149	272	318	356	258	0
+850600	92	229	252	188	103	0
+850800	212	412	426	362	208	0
+850810	94	180	249	305	203	0
+851000	126	194	260	322	255	0
+851200	88	161	198	253	175	0
+851300	79	171	242	239	188	0
+851500	60	111	163	204	207	0
+851600	66	119	155	191	144	0
+851700	71	121	243	206	193	0
+851800	77	169	258	234	221	0
+852010	94	192	273	261	210	0
+852100	95	203	263	233	156	0
+\.
+
+
+--
+-- Data for Name: candidates; Type: TABLE DATA; Schema: public; Owner: paulheo
 --
 
 COPY public.candidates (id, name, party) FROM stdin;
@@ -123,7 +245,187 @@ COPY public.candidates (id, name, party) FROM stdin;
 
 
 --
--- Data for Name: votes; Type: TABLE DATA; Schema: public; Owner: timothyyuan
+-- Data for Name: precincts; Type: TABLE DATA; Schema: public; Owner: paulheo
+--
+
+COPY public.precincts (id, city, county) FROM stdin;
+832800	Fremont	Alameda
+832810	Fremont	Alameda
+832900	Fremont	Alameda
+833000	Fremont	Alameda
+833100	Fremont	Alameda
+833200	Fremont	Alameda
+833210	Fremont	Alameda
+833300	Fremont	Alameda
+833410	Fremont	Alameda
+833500	Fremont	Alameda
+833610	Fremont	Alameda
+833700	Fremont	Alameda
+833710	Fremont	Alameda
+835310	Fremont	Alameda
+835800	Fremont	Alameda
+835820	Fremont	Alameda
+835910	Fremont	Alameda
+836110	Fremont	Alameda
+836200	Fremont	Alameda
+836500	Fremont	Alameda
+836600	Fremont	Alameda
+836700	Fremont	Alameda
+837100	Fremont	Alameda
+837200	Fremont	Alameda
+837400	Fremont	Alameda
+837500	Fremont	Alameda
+837600	Fremont	Alameda
+837700	Fremont	Alameda
+837710	Fremont	Alameda
+838000	Fremont	Alameda
+838110	Fremont	Alameda
+838600	Fremont	Alameda
+838700	Fremont	Alameda
+839530	Fremont	Alameda
+850300	Newark	Alameda
+850330	Newark	Alameda
+850400	Newark	Alameda
+850500	Newark	Alameda
+850600	Newark	Alameda
+850800	Newark	Alameda
+850810	Newark	Alameda
+851000	Newark	Alameda
+851200	Newark	Alameda
+851300	Newark	Alameda
+851500	Newark	Alameda
+851600	Newark	Alameda
+851700	Newark	Alameda
+851800	Newark	Alameda
+852010	Newark	Alameda
+852100	Newark	Alameda
+838500.01	Fremont	Alameda
+838300.01	Fremont	Alameda
+\.
+
+
+--
+-- Data for Name: race; Type: TABLE DATA; Schema: public; Owner: paulheo
+--
+
+COPY public.race (precinct_id, african_american, asian, caucasian, hispanic, native_american, uncoded, unknown) FROM stdin;
+832800	10	331	347	145	0	31	0
+832810	5	276	350	175	0	20	0
+832900	1	268	405	153	0	11	0
+833000	4	187	277	240	0	47	0
+833100	0	221	327	111	0	23	0
+833200	3	203	382	111	0	29	0
+833210	1	238	446	166	0	14	0
+833300	3	308	359	124	0	29	0
+833410	5	634	315	117	0	67	0
+833500	3	409	279	58	0	49	0
+833610	1	184	234	145	0	7	0
+833700	10	396	346	100	0	46	0
+833710	1	291	285	231	0	36	0
+835310	31	545	393	88	1	127	0
+835800	112	206	354	213	0	94	0
+835820	10	352	252	37	0	131	0
+835910	15	361	387	116	0	42	0
+836110	0	601	220	1	0	31	0
+836200	0	604	104	2	0	24	0
+836500	16	700	222	23	0	58	0
+836600	0	557	213	20	0	30	0
+836700	2	250	160	23	0	17	0
+837100	0	930	226	4	0	66	0
+837200	0	559	162	7	0	41	0
+837400	1	913	188	0	0	81	0
+837500	0	713	198	16	0	41	0
+837600	0	986	219	0	0	51	0
+837700	1	984	165	0	0	57	0
+837710	0	686	15	0	0	72	0
+838000	1	636	278	0	0	50	0
+838110	0	724	38	0	0	73	0
+838300.01	0	236	111	6	0	31	0
+838500.01	0	243	177	11	0	17	0
+838600	0	462	325	10	0	51	0
+838700	8	707	253	2	0	99	0
+839530	0	516	61	0	0	36	0
+850300	14	334	329	144	0	43	0
+850330	19	491	329	88	0	83	0
+850400	1	189	329	179	0	43	0
+850500	10	477	434	315	0	117	0
+850600	17	157	294	316	0	80	0
+850800	15	432	482	540	0	151	0
+850810	18	344	390	214	3	62	0
+851000	11	304	512	283	0	47	0
+851200	5	181	390	283	0	16	0
+851300	7	257	392	224	0	39	0
+851500	3	150	434	124	0	34	0
+851600	2	79	322	237	0	35	0
+851700	4	186	396	202	0	46	0
+851800	2	257	407	274	0	19	0
+852010	2	226	435	310	0	57	0
+852100	13	156	318	396	0	67	0
+\.
+
+
+--
+-- Data for Name: sex; Type: TABLE DATA; Schema: public; Owner: paulheo
+--
+
+COPY public.sex (precinct_id, male, female, unknown) FROM stdin;
+832800	387	387	90
+832810	382	360	84
+832900	393	375	70
+833000	328	326	101
+833100	301	312	69
+833200	337	336	55
+833210	391	383	91
+833300	353	377	93
+833410	466	466	206
+833500	317	362	119
+833610	256	254	61
+833700	408	343	147
+833710	393	368	83
+835310	480	567	138
+835800	445	437	97
+835820	331	343	108
+835910	412	399	110
+836110	375	377	101
+836200	330	313	91
+836500	417	457	145
+836600	356	353	111
+836700	218	186	48
+837100	517	541	168
+837200	296	353	120
+837400	535	496	152
+837500	435	400	133
+837600	570	542	144
+837700	542	507	158
+837710	355	332	86
+838000	432	440	93
+838110	356	352	127
+838300.01	155	168	61
+838500.01	201	185	62
+838600	354	370	124
+838700	469	440	160
+839530	290	262	61
+850300	397	383	84
+850330	437	439	134
+850400	347	329	65
+850500	582	632	139
+850600	371	418	75
+850800	714	694	212
+850810	455	470	106
+851000	522	538	97
+851200	400	411	64
+851300	409	440	70
+851500	346	355	44
+851600	312	319	44
+851700	373	383	78
+851800	428	463	68
+852010	448	505	77
+852100	413	441	96
+\.
+
+
+--
+-- Data for Name: votes; Type: TABLE DATA; Schema: public; Owner: paulheo
 --
 
 COPY public.votes (id, candidate_id, precinct_id, count) FROM stdin;
@@ -671,21 +973,21 @@ COPY public.votes (id, candidate_id, precinct_id, count) FROM stdin;
 
 
 --
--- Name: candidates_id_seq; Type: SEQUENCE SET; Schema: public; Owner: timothyyuan
+-- Name: candidates_id_seq; Type: SEQUENCE SET; Schema: public; Owner: paulheo
 --
 
 SELECT pg_catalog.setval('public.candidates_id_seq', 9, true);
 
 
 --
--- Name: votes_id_seq; Type: SEQUENCE SET; Schema: public; Owner: timothyyuan
+-- Name: votes_id_seq; Type: SEQUENCE SET; Schema: public; Owner: paulheo
 --
 
 SELECT pg_catalog.setval('public.votes_id_seq', 540, true);
 
 
 --
--- Name: candidates candidates_pkey; Type: CONSTRAINT; Schema: public; Owner: timothyyuan
+-- Name: candidates candidates_pkey; Type: CONSTRAINT; Schema: public; Owner: paulheo
 --
 
 ALTER TABLE ONLY public.candidates
@@ -693,7 +995,15 @@ ALTER TABLE ONLY public.candidates
 
 
 --
--- Name: votes votes_pkey; Type: CONSTRAINT; Schema: public; Owner: timothyyuan
+-- Name: precincts precincts_pkey; Type: CONSTRAINT; Schema: public; Owner: paulheo
+--
+
+ALTER TABLE ONLY public.precincts
+    ADD CONSTRAINT precincts_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: votes votes_pkey; Type: CONSTRAINT; Schema: public; Owner: paulheo
 --
 
 ALTER TABLE ONLY public.votes
@@ -701,7 +1011,31 @@ ALTER TABLE ONLY public.votes
 
 
 --
--- Name: votes votes_candidate_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: timothyyuan
+-- Name: age age_precinct_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: paulheo
+--
+
+ALTER TABLE ONLY public.age
+    ADD CONSTRAINT age_precinct_id_fkey FOREIGN KEY (precinct_id) REFERENCES public.precincts(id);
+
+
+--
+-- Name: race race_precinct_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: paulheo
+--
+
+ALTER TABLE ONLY public.race
+    ADD CONSTRAINT race_precinct_id_fkey FOREIGN KEY (precinct_id) REFERENCES public.precincts(id);
+
+
+--
+-- Name: sex sex_precinct_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: paulheo
+--
+
+ALTER TABLE ONLY public.sex
+    ADD CONSTRAINT sex_precinct_id_fkey FOREIGN KEY (precinct_id) REFERENCES public.precincts(id);
+
+
+--
+-- Name: votes votes_candidate_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: paulheo
 --
 
 ALTER TABLE ONLY public.votes
