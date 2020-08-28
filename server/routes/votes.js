@@ -12,8 +12,7 @@ const pool = new Pool({
 //  table: what table to access
 //  params: object with name and value of each entry
 function getQuery(table, params) {
-  var query = "SELECT * FROM " + table;
-
+  var query = "SELECT votes.candidate_id, votes.precinct_id, votes.count, precincts.city, precincts.county, race.african_american, race.asian, race.caucasian, race.hispanic, race.native_american, race.uncoded, race.unknown, age.a, age.b, age.c, age.d, age.e, age.unknown, sex.male, sex.female, sex.unknown FROM votes INNER JOIN precincts ON (votes.precinct_id=precincts.id) INNER JOIN race ON (precincts.id=race.precinct_id) INNER JOIN age ON (precincts.id=age.precinct_id) INNER JOIN sex ON (precincts.id=sex.precinct_id)";
   var first = true;
   for (let key in params) {
       if (first) {
