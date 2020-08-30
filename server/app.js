@@ -1,7 +1,11 @@
+var cors = require('cors');
 var express = require('express');
 var app = express();
 var candidates = require('./routes/candidates.js')
 var votes = require('./routes/votes.js')
+
+// Allow cross origin resource sharing
+app.use(cors());
 
 // Parse URL-encoded bodies (as sent by HTML forms)
 app.use(express.urlencoded());
