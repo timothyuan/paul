@@ -30,7 +30,6 @@ function getQuery(table, params) {
   return query;
 }
 
-
 //Gets list of all votes for the candidates, or certain candidates/precincts.
 router.get('/', function(req,res) {
   pool.query(getQuery("votes",req.query), (err, response) => {
@@ -46,7 +45,5 @@ router.get('/', function(req,res) {
     }
   });
 });
-
-
 
 module.exports = router;
