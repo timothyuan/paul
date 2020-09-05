@@ -62,8 +62,17 @@ import {Pie} from 'react-chartjs-2';
          ]
        }]
      };
-     chart.labels = data.map(result => result.name);
-     chart.datasets[0].data = data.map(result => result.count);
+     let candidates = new Map();
+     data.map(result => {
+       if (!candidates.has(result.name)){
+         candidates.set(result.name, result.count);
+       } else {
+         candidates.set(result.name, candidates.get(result.name)+result.count);
+       }
+     });
+     chart.labels = Array.from(candidates.keys());
+     chart.datasets[0].data = Array.from(candidates.values());
+     console.log(chart);
      this.setState({chart: chart});
    }
 
