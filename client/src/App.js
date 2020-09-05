@@ -1,12 +1,13 @@
 import React from 'react';
 import axios from 'axios';
 import Select from 'react-select';
+import {Pie} from 'react-chartjs-2';
 
  class App extends React.Component{
 
    constructor(props){
      super(props);
-     this.state = {data : 'Data goes here'};
+     this.state = {chart : null};
    }
 
    componentDidMount = () => {
@@ -39,8 +40,31 @@ import Select from 'react-select';
    getData = () => {
      let url = 'http://localhost:3000/votes'
      axios.get(url, { params: { candidate_id : this.state.candidate_id, precinct_id : this.state.precinct_id}}).then(response => {
-       this.setState({ data: response.data[0].count});
+       this.populate(response.data);
      });
+   }
+
+   populate = (data) => {
+     let chart = {
+       labels: [],
+       datasets: [{
+         data: [],
+         backgroundColor: [
+           '#FF6384',
+           '#FF944B',
+           '#FFCE56',
+           '#6FFF76',
+           '#73E9FE',
+           '#36A2EB',
+           '#7375FE',
+           '#A373FE',
+           '#FE73BD'
+         ]
+       }]
+     };
+     chart.labels = data.map(result => result.name);
+     chart.datasets[0].data = data.map(result => result.count);
+     this.setState({chart: chart});
    }
 
    render(){
@@ -61,7 +85,7 @@ import Select from 'react-select';
           options = {precinctOptions}
         />
         <button onClick = {this.getData}>Get Data</button>
-        <div>{this.state.data}</div>
+        {this.state.chart && <Pie data={this.state.chart} />}
        </>
      );
    }
