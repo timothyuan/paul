@@ -13,12 +13,30 @@ import 'chartjs-plugin-labels';
        chartOptions : {
          plugins: {
            labels: {
+             render:'value',
              fontColor: '#FFFFFF'
            }
          }
        }
      };
    }
+
+   toggle = () => {
+     let type = 'value';
+     if (this.state.chartOptions.plugins.labels.render === 'value'){
+       type = 'percentage';
+     }
+     this.setState({
+       chartOptions:{
+         plugins:{
+           labels:{
+             render:type,
+             fontColor:'#FFFFFF'
+           }
+         }
+       }
+     })
+   };
 
    componentDidMount = () => {
      axios.get('http://localhost:3000/candidates').then(response => {
@@ -103,6 +121,7 @@ import 'chartjs-plugin-labels';
           options = {precinctOptions}
         />
         <button onClick = {this.getData}>Get Data</button>
+        <button onClick={this.toggle}>Toggle Percentage</button>
         {this.state.chart && <Pie data={this.state.chart} options={this.state.chartOptions}/>}
        </>
      );
