@@ -2,12 +2,22 @@ import React from 'react';
 import axios from 'axios';
 import Select from 'react-select';
 import {Pie} from 'react-chartjs-2';
+import 'chartjs-plugin-labels';
 
  class App extends React.Component{
 
    constructor(props){
      super(props);
-     this.state = {chart : null};
+     this.state = {
+       chart : null,
+       chartOptions : {
+         plugins: {
+           labels: {
+             fontColor: '#FFFFFF'
+           }
+         }
+       }
+     };
    }
 
    componentDidMount = () => {
@@ -72,7 +82,6 @@ import {Pie} from 'react-chartjs-2';
      });
      chart.labels = Array.from(candidates.keys());
      chart.datasets[0].data = Array.from(candidates.values());
-     console.log(chart);
      this.setState({chart: chart});
    }
 
@@ -94,7 +103,7 @@ import {Pie} from 'react-chartjs-2';
           options = {precinctOptions}
         />
         <button onClick = {this.getData}>Get Data</button>
-        {this.state.chart && <Pie data={this.state.chart} />}
+        {this.state.chart && <Pie data={this.state.chart} options={this.state.chartOptions}/>}
        </>
      );
    }
