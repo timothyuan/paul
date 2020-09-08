@@ -11,30 +11,21 @@ class App extends React.Component{
     this.state = {
       voteChart : null,
       sexChart: null,
+      raceChart: null,
+      ageChart: null,
       voteChartOptions : null,
-      sexChartOptions: null
-
+      sexChartOptions: null,
+      raceChartOptions: null,
+      ageChartOptions: null
     };
   };
 
   componentDidMount = () => {
-    // axios.get('http://localhost:3000/candidates').then(response => {
-    //   let candidateOptions = response.data.map(candidate => ({value: candidate.id, label: candidate.name}));
-    //   this.setState({candidateOptions});
-    // });
     axios.get('http://localhost:3000/precincts').then(response => {
       let precinctOptions = response.data.map(precinct => ({value: precinct.id, label: precinct.id+', '+precinct.city+', '+precinct.county}));
       this.setState({precinctOptions});
     });
   };
-
-  // handleCandidate = (selectedOption) => {
-  //   if(selectedOption==null){
-  //     this.setState({candidate_id: selectedOption});
-  //   }else{
-  //     this.setState({candidate_id: selectedOption.value});
-  //   }
-  // };
 
   handlePrecinct = (selectedOption) => {
     if(selectedOption==null){
@@ -47,7 +38,7 @@ class App extends React.Component{
   getData = () => {
     axios.get('http://localhost:3000/votes', { params: { candidate_id : this.state.candidate_id, precinct_id : this.state.precinct_id}}).then(response => {
       this.populateVotes(response.data);
-      this.populateSex(response.data);
+      this.populateDemographics(response.data);
     });
   };
 
@@ -72,13 +63,13 @@ class App extends React.Component{
 
     // format data
     let candidates = new Map();
-      data.map(result => {
-        if (!candidates.has(result.name)){
-          candidates.set(result.name, result.count);
-        } else {
-          candidates.set(result.name, candidates.get(result.name)+result.count);
-        }
-      });
+    data.map(result => {
+      if (!candidates.has(result.name)){
+        candidates.set(result.name, result.count);
+      } else {
+        candidates.set(result.name, candidates.get(result.name)+result.count);
+      }
+    });
     chart.labels = Array.from(candidates.keys());
     chart.datasets[0].data = Array.from(candidates.values());
     this.setState({voteChart: chart});
@@ -106,8 +97,20 @@ class App extends React.Component{
     });
   };
 
-  populateSex = (data) => {
-    let chart = {
+  populateDemographics = (data) => {
+    // initialize charts
+    let sexChart = {
+      labels: [],
+      datasets: [{
+        data: [],
+        backgroundColor: [
+          '#FF6384',
+          '#FF944B',
+          '#FFCE56'
+        ]
+      }]
+    };
+    let raceChart = {
       labels: [],
       datasets: [{
         data: [],
@@ -117,42 +120,71 @@ class App extends React.Component{
           '#FFCE56',
           '#6FFF76',
           '#73E9FE',
-          '#36A2EB',
-          '#7375FE',
-          '#A373FE',
-          '#FE73BD'
+          '#36A2EB'
+        ]
+      }]
+    };
+    let ageChart = {
+      labels: [],
+      datasets: [{
+        data: [],
+        backgroundColor: [
+          '#FF6384',
+          '#FF944B',
+          '#FFCE56',
+          '#6FFF76',
+          '#73E9FE'
         ]
       }]
     };
 
-    // format data
+    // iterate through data
     let precincts = new Map();
     let sex = new Map([
       ['Male',0],
       ['Female',0],
       ['Unknown',0]
     ]);
+    let race = new Map([
+      ['African American',0],
+      ['Asian',0],
+      ['Caucasian',0],
+      ['Hispanic',0],
+      ['Native American',0],
+      ['Uncoded',0]
+    ]);
+    let age = new Map([
+      ['18-24',0],
+      ['25-34',0],
+      ['35-49',0],
+      ['50-64',0],
+      ['65+',0]
+    ]);
+    data.map(result => {
+      if (!precincts.has(result.precinct_id)) {
+        sex.set('Male',sex.get('Male')+result.male);
+        sex.set('Female',sex.get('Female')+result.female);
+        sex.set('Unknown',sex.get('Unknown')+result.unknown);
+        race.set('African American',race.get('African American')+result.african_american);
+        race.set('Asian',race.get('Asian')+result.asian);
+        race.set('Caucasian',race.get('Caucasian')+result.caucasian);
+        race.set('Hispanic',race.get('Hispanic')+result.hispanic);
+        race.set('Native American',race.get('Native American')+result.native_american);
+        race.set('Uncoded',race.get('Uncoded')+result.uncoded);
+        age.set('18-24',age.get('18-24')+result.a);
+        age.set('25-34',age.get('25-34')+result.b);
+        age.set('35-49',age.get('35-49')+result.c);
+        age.set('50-64',age.get('50-64')+result.d);
+        age.set('65+',age.get('65+')+result.e);
+        precincts.set(result.precinct_id);
+      }
+    });
+    console.log(sex)
 
-      data.map(result => {
-        if (!precincts.has(result.precinct_id)) {
-          sex.set('Male',sex.get('Male')+result.male)
-          sex.set('Female',sex.get('Female')+result.female)
-          sex.set('Unknown',sex.get('Unknown')+result.unknown)
-          precincts.set(result.precinct_id);
-        }
-      });
-
-    chart.labels = Array.from(sex.keys());
-    chart.datasets[0].data = Array.from(sex.values());
-    this.setState({sexChart: chart});
-
-    // format title
-    let chartTitle = 'Sex of Registered Voters in ';
-    if(this.state.precinct_id==null){
-      chartTitle += 'All Precincts';
-    }else{
-      chartTitle += 'Precinct ' + this.state.precinct_id;
-    }
+    // assign data to chart
+    sexChart.labels = Array.from(sex.keys());
+    sexChart.datasets[0].data = Array.from(sex.values());
+    this.setState({sexChart: sexChart});
     this.setState({
       sexChartOptions:{
         plugins: {
@@ -163,7 +195,41 @@ class App extends React.Component{
         },
         title: {
           display: true,
-          text: chartTitle
+          text: 'Sex'
+        }
+      }
+    });
+    raceChart.labels = Array.from(race.keys());
+    raceChart.datasets[0].data = Array.from(race.values());
+    this.setState({raceChart: raceChart});
+    this.setState({
+      raceChartOptions:{
+        plugins: {
+          labels: {
+            render:'value',
+            fontColor: '#FFFFFF'
+          }
+        },
+        title: {
+          display: true,
+          text: 'Race'
+        }
+      }
+    });
+    ageChart.labels = Array.from(age.keys());
+    ageChart.datasets[0].data = Array.from(age.values());
+    this.setState({ageChart: ageChart});
+    this.setState({
+      ageChartOptions:{
+        plugins: {
+          labels: {
+            render:'value',
+            fontColor: '#FFFFFF'
+          }
+        },
+        title: {
+          display: true,
+          text: 'Age'
         }
       }
     });
@@ -194,10 +260,30 @@ class App extends React.Component{
         }
       }
     });
+    this.setState({
+      raceChartOptions:{
+        plugins:{
+          labels:{
+            render:type,
+            fontColor:'#FFFFFF'
+          }
+        }
+      }
+    });
+    this.setState({
+      ageChartOptions:{
+        plugins:{
+          labels:{
+            render:type,
+            fontColor:'#FFFFFF'
+          }
+        }
+      }
+    });
   };
 
   render(){
-    const { candidateOptions, precinctOptions } = this.state;
+    const { precinctOptions } = this.state;
 
     return (
       <>
@@ -211,6 +297,8 @@ class App extends React.Component{
       <button onClick = {this.toggle} disabled = {!this.state.voteChartOptions}>Toggle Percentage</button>
       {this.state.voteChart && <Pie data={this.state.voteChart} options={this.state.voteChartOptions}/>}
       {this.state.sexChart && <Pie data={this.state.sexChart} options={this.state.sexChartOptions}/>}
+      {this.state.raceChart && <Pie data={this.state.raceChart} options={this.state.raceChartOptions}/>}
+      {this.state.ageChart && <Pie data={this.state.ageChart} options={this.state.ageChartOptions}/>}
       </>
     );
   }
