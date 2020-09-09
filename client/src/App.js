@@ -3,15 +3,8 @@ import axios from 'axios';
 import Select from 'react-select';
 import {Pie} from 'react-chartjs-2';
 import 'chartjs-plugin-labels';
-import Button from 'react-bootstrap/Button';
+import { Button, ToggleButton, ToggleButtonGroup } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
-
-var styles = {
-  left: {width:'50%', float:'left'},
-  right: {width:'50%', float:'right'},
-  flexbox: {display:'flex'},
-  dropdown: {flex:1}
-}
 
 class App extends React.Component{
 
@@ -27,7 +20,8 @@ class App extends React.Component{
       raceChartOptions: null,
       ageChartOptions: null,
       votes: null,
-      registered: null
+      registered: null,
+      demographics: [true, true, true]
     };
   };
 
@@ -110,6 +104,10 @@ class App extends React.Component{
         title: {
           display: true,
           text: chartTitle
+        },
+        legend:{
+          display: true,
+          position: 'left'
         }
       }
     });
@@ -216,6 +214,10 @@ class App extends React.Component{
         title: {
           display: true,
           text: 'Sex'
+        },
+        legend:{
+          display: true,
+          position: 'right'
         }
       }
     });
@@ -233,6 +235,10 @@ class App extends React.Component{
         title: {
           display: true,
           text: 'Race'
+        },
+        legend:{
+          display: true,
+          position: 'left'
         }
       }
     });
@@ -250,12 +256,16 @@ class App extends React.Component{
         title: {
           display: true,
           text: 'Age'
+        },
+        legend:{
+          display: true,
+          position: 'right'
         }
       }
     });
   };
 
-  toggle = () => {
+  togglePercentage = () => {
     let type = 'value';
     if (this.state.voteChartOptions.plugins.labels.render === 'value'){
       type = 'percentage';
@@ -302,13 +312,27 @@ class App extends React.Component{
     });
   };
 
+  toggleDemographics = (vals) => {
+    let demographics = [false, false, false];
+    for(let v of vals.values()){
+      demographics[v] = true;
+    }
+    this.setState({demographics});
+  };
+
   render(){
     const { precinctOptions } = this.state;
+    var styles = {
+      left: {float:'left', width:'50%'},
+      right: {float:'right', width:'50%'},
+      flexbox: {display:'flex'},
+      fill: {flex:1}
+    };
 
     return (
       <>
         <div style={styles.flexbox}>
-          <div style={styles.dropdown}>
+          <div style={styles.fill}>
             <Select
             isClearable = {true}
             placeholder = {'Select Precinct'}
@@ -317,15 +341,20 @@ class App extends React.Component{
             />
           </div>
           <Button onClick = {this.getData}>Get Data</Button>
-          <Button onClick = {this.toggle} disabled = {!this.state.voteChartOptions}>Toggle Percentage</Button>
+          <Button onClick = {this.togglePercentage} disabled = {!this.state.voteChartOptions}>Toggle Percentage</Button>
+          <ToggleButtonGroup type='checkbox' onChange={this.toggleDemographics} defaultValue={[0,1,2]}>
+            <ToggleButton value={0}>Race</ToggleButton>
+            <ToggleButton value={1}>Age</ToggleButton>
+            <ToggleButton value={2}>Sex</ToggleButton>
+          </ToggleButtonGroup>
         </div>
         <div style={styles.left}>
           {this.state.voteChart && <Pie data={this.state.voteChart} options={this.state.voteChartOptions}/>}
-          {this.state.sexChart && <Pie data={this.state.sexChart} options={this.state.sexChartOptions}/>}
+          {this.state.demographics[0] && this.state.raceChart && <Pie data={this.state.raceChart} options={this.state.raceChartOptions}/>}
         </div>
         <div style={styles.right}>
-          {this.state.raceChart && <Pie data={this.state.raceChart} options={this.state.raceChartOptions}/>}
-          {this.state.ageChart && <Pie data={this.state.ageChart} options={this.state.ageChartOptions}/>}
+          {this.state.demographics[1] && this.state.ageChart && <Pie data={this.state.ageChart} options={this.state.ageChartOptions}/>}
+          {this.state.demographics[2] && this.state.sexChart && <Pie data={this.state.sexChart} options={this.state.sexChartOptions}/>}
         </div>
       </>
     );
