@@ -3,6 +3,8 @@ import axios from 'axios';
 import Select from 'react-select';
 import {Pie} from 'react-chartjs-2';
 import 'chartjs-plugin-labels';
+import { Button, ToggleButton, ToggleButtonGroup } from 'react-bootstrap';
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 class App extends React.Component{
 
@@ -16,7 +18,10 @@ class App extends React.Component{
       voteChartOptions : null,
       sexChartOptions: null,
       raceChartOptions: null,
-      ageChartOptions: null
+      ageChartOptions: null,
+      votes: null,
+      registered: null,
+      demographics: [true, true, true]
     };
   };
 
@@ -37,12 +42,13 @@ class App extends React.Component{
 
   getData = () => {
     axios.get('http://localhost:3000/votes', { params: { candidate_id : this.state.candidate_id, precinct_id : this.state.precinct_id}}).then(response => {
-      this.populateVotes(response.data);
       this.populateDemographics(response.data);
+      this.populateVotes(response.data);
     });
   };
 
   populateVotes = (data) => {
+    // initialize chart
     let chart = {
       labels: [],
       datasets: [{
@@ -61,26 +67,32 @@ class App extends React.Component{
       }]
     };
 
-    // format data
+    // iterate through data
     let candidates = new Map();
+    let votes = 0;
     data.map(result => {
       if (!candidates.has(result.name)){
         candidates.set(result.name, result.count);
       } else {
         candidates.set(result.name, candidates.get(result.name)+result.count);
       }
+      votes+=result.count;
     });
+    this.setState({votes});
+
+    // format title and calculate turnout
+    let chartTitle = 'Votes for ';
+    if(this.state.precinct_id==null){
+      chartTitle += 'All Precincts: ';
+    }else{
+      chartTitle += 'Precinct ' + this.state.precinct_id + ': ';
+    }
+    chartTitle += (this.state.votes/this.state.registered*100).toFixed(2)+'% Turnout';
+
+    // assign data to chart
     chart.labels = Array.from(candidates.keys());
     chart.datasets[0].data = Array.from(candidates.values());
     this.setState({voteChart: chart});
-
-    // format title
-    let chartTitle = 'Votes for ';
-    if(this.state.precinct_id==null){
-      chartTitle += 'All Precincts';
-    }else{
-      chartTitle += 'Precinct ' + this.state.precinct_id;
-    }
     this.setState({
       voteChartOptions:{
         plugins: {
@@ -92,6 +104,10 @@ class App extends React.Component{
         title: {
           display: true,
           text: chartTitle
+        },
+        legend:{
+          display: true,
+          position: 'left'
         }
       }
     });
@@ -160,6 +176,7 @@ class App extends React.Component{
       ['50-64',0],
       ['65+',0]
     ]);
+    let registered = 0;
     data.map(result => {
       if (!precincts.has(result.precinct_id)) {
         sex.set('Male',sex.get('Male')+result.male);
@@ -177,11 +194,12 @@ class App extends React.Component{
         age.set('50-64',age.get('50-64')+result.d);
         age.set('65+',age.get('65+')+result.e);
         precincts.set(result.precinct_id);
+        registered+=result.male+result.female+result.unknown;
       }
     });
-    console.log(sex)
 
     // assign data to chart
+    this.setState({registered});
     sexChart.labels = Array.from(sex.keys());
     sexChart.datasets[0].data = Array.from(sex.values());
     this.setState({sexChart: sexChart});
@@ -196,6 +214,10 @@ class App extends React.Component{
         title: {
           display: true,
           text: 'Sex'
+        },
+        legend:{
+          display: true,
+          position: 'right'
         }
       }
     });
@@ -213,6 +235,10 @@ class App extends React.Component{
         title: {
           display: true,
           text: 'Race'
+        },
+        legend:{
+          display: true,
+          position: 'left'
         }
       }
     });
@@ -230,12 +256,16 @@ class App extends React.Component{
         title: {
           display: true,
           text: 'Age'
+        },
+        legend:{
+          display: true,
+          position: 'right'
         }
       }
     });
   };
 
-  toggle = () => {
+  togglePercentage = () => {
     let type = 'value';
     if (this.state.voteChartOptions.plugins.labels.render === 'value'){
       type = 'percentage';
@@ -282,23 +312,50 @@ class App extends React.Component{
     });
   };
 
+  toggleDemographics = (vals) => {
+    let demographics = [false, false, false];
+    for(let v of vals.values()){
+      demographics[v] = true;
+    }
+    this.setState({demographics});
+  };
+
   render(){
     const { precinctOptions } = this.state;
+    var styles = {
+      left: {float:'left', width:'50%'},
+      right: {float:'right', width:'50%'},
+      flexbox: {display:'flex'},
+      fill: {flex:1}
+    };
 
     return (
       <>
-      <Select
-      isClearable = {true}
-      placeholder = {'Select Precinct'}
-      onChange = {this.handlePrecinct}
-      options = {precinctOptions}
-      />
-      <button onClick = {this.getData}>Get Data</button>
-      <button onClick = {this.toggle} disabled = {!this.state.voteChartOptions}>Toggle Percentage</button>
-      {this.state.voteChart && <Pie data={this.state.voteChart} options={this.state.voteChartOptions}/>}
-      {this.state.sexChart && <Pie data={this.state.sexChart} options={this.state.sexChartOptions}/>}
-      {this.state.raceChart && <Pie data={this.state.raceChart} options={this.state.raceChartOptions}/>}
-      {this.state.ageChart && <Pie data={this.state.ageChart} options={this.state.ageChartOptions}/>}
+        <div style={styles.flexbox}>
+          <div style={styles.fill}>
+            <Select
+            isClearable = {true}
+            placeholder = {'Select Precinct'}
+            onChange = {this.handlePrecinct}
+            options = {precinctOptions}
+            />
+          </div>
+          <Button onClick = {this.getData}>Get Data</Button>
+          <Button onClick = {this.togglePercentage} disabled = {!this.state.voteChartOptions}>Toggle Percentage</Button>
+          <ToggleButtonGroup type='checkbox' onChange={this.toggleDemographics} defaultValue={[0,1,2]}>
+            <ToggleButton value={0}>Race</ToggleButton>
+            <ToggleButton value={1}>Age</ToggleButton>
+            <ToggleButton value={2}>Sex</ToggleButton>
+          </ToggleButtonGroup>
+        </div>
+        <div style={styles.left}>
+          {this.state.voteChart && <Pie data={this.state.voteChart} options={this.state.voteChartOptions}/>}
+          {this.state.demographics[0] && this.state.raceChart && <Pie data={this.state.raceChart} options={this.state.raceChartOptions}/>}
+        </div>
+        <div style={styles.right}>
+          {this.state.demographics[1] && this.state.ageChart && <Pie data={this.state.ageChart} options={this.state.ageChartOptions}/>}
+          {this.state.demographics[2] && this.state.sexChart && <Pie data={this.state.sexChart} options={this.state.sexChartOptions}/>}
+        </div>
       </>
     );
   }
