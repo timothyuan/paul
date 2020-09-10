@@ -277,6 +277,10 @@ class App extends React.Component{
             render:type,
             fontColor:'#FFFFFF'
           }
+        },
+        legend:{
+          display: true,
+          position: 'left'
         }
       }
     });
@@ -286,7 +290,15 @@ class App extends React.Component{
           labels:{
             render:type,
             fontColor:'#FFFFFF'
-          }
+          },
+        },
+        title: {
+          display: true,
+          text: 'Sex'
+        },
+        legend:{
+          display: true,
+          position: 'right'
         }
       }
     });
@@ -296,7 +308,15 @@ class App extends React.Component{
           labels:{
             render:type,
             fontColor:'#FFFFFF'
-          }
+          },
+        },
+        title: {
+          display: true,
+          text: 'Race'
+        },
+        legend:{
+          display: true,
+          position: 'left'
         }
       }
     });
@@ -306,7 +326,15 @@ class App extends React.Component{
           labels:{
             render:type,
             fontColor:'#FFFFFF'
-          }
+          },
+        },
+        title: {
+          display: true,
+          text: 'Age'
+        },
+        legend:{
+          display: true,
+          position: 'right'
         }
       }
     });
