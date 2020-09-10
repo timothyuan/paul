@@ -3,7 +3,7 @@ var router = express.Router();
 
 const { Pool } = require('pg')
 const pool = new Pool({
-  database: 'pauldb'
+  connectionString: process.env.DATABASE_URL
 });
 
 // Get list of all precincts
