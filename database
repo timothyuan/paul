@@ -21,7 +21,7 @@ SET default_tablespace = '';
 SET default_table_access_method = heap;
 
 --
--- Name: age; Type: TABLE; Schema: public; Owner: paulheo
+-- Name: age; Type: TABLE; Schema: public; Owner: timothyyuan
 --
 
 CREATE TABLE public.age (
@@ -35,10 +35,10 @@ CREATE TABLE public.age (
 );
 
 
-ALTER TABLE public.age OWNER TO paulheo;
+ALTER TABLE public.age OWNER TO timothyyuan;
 
 --
--- Name: candidates; Type: TABLE; Schema: public; Owner: paulheo
+-- Name: candidates; Type: TABLE; Schema: public; Owner: timothyyuan
 --
 
 CREATE TABLE public.candidates (
@@ -48,10 +48,10 @@ CREATE TABLE public.candidates (
 );
 
 
-ALTER TABLE public.candidates OWNER TO paulheo;
+ALTER TABLE public.candidates OWNER TO timothyyuan;
 
 --
--- Name: candidates_id_seq; Type: SEQUENCE; Schema: public; Owner: paulheo
+-- Name: candidates_id_seq; Type: SEQUENCE; Schema: public; Owner: timothyyuan
 --
 
 CREATE SEQUENCE public.candidates_id_seq
@@ -63,17 +63,35 @@ CREATE SEQUENCE public.candidates_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.candidates_id_seq OWNER TO paulheo;
+ALTER TABLE public.candidates_id_seq OWNER TO timothyyuan;
 
 --
--- Name: candidates_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: paulheo
+-- Name: candidates_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: timothyyuan
 --
 
 ALTER SEQUENCE public.candidates_id_seq OWNED BY public.candidates.id;
 
 
 --
--- Name: precincts; Type: TABLE; Schema: public; Owner: paulheo
+-- Name: party; Type: TABLE; Schema: public; Owner: timothyyuan
+--
+
+CREATE TABLE public.party (
+    precinct_id numeric NOT NULL,
+    democratic integer NOT NULL,
+    green integer NOT NULL,
+    libertarian integer NOT NULL,
+    other integer NOT NULL,
+    republican integer NOT NULL,
+    unaffiliated integer NOT NULL,
+    peace_and_freedom integer NOT NULL
+);
+
+
+ALTER TABLE public.party OWNER TO timothyyuan;
+
+--
+-- Name: precincts; Type: TABLE; Schema: public; Owner: timothyyuan
 --
 
 CREATE TABLE public.precincts (
@@ -83,10 +101,10 @@ CREATE TABLE public.precincts (
 );
 
 
-ALTER TABLE public.precincts OWNER TO paulheo;
+ALTER TABLE public.precincts OWNER TO timothyyuan;
 
 --
--- Name: race; Type: TABLE; Schema: public; Owner: paulheo
+-- Name: race; Type: TABLE; Schema: public; Owner: timothyyuan
 --
 
 CREATE TABLE public.race (
@@ -101,10 +119,10 @@ CREATE TABLE public.race (
 );
 
 
-ALTER TABLE public.race OWNER TO paulheo;
+ALTER TABLE public.race OWNER TO timothyyuan;
 
 --
--- Name: sex; Type: TABLE; Schema: public; Owner: paulheo
+-- Name: sex; Type: TABLE; Schema: public; Owner: timothyyuan
 --
 
 CREATE TABLE public.sex (
@@ -115,10 +133,10 @@ CREATE TABLE public.sex (
 );
 
 
-ALTER TABLE public.sex OWNER TO paulheo;
+ALTER TABLE public.sex OWNER TO timothyyuan;
 
 --
--- Name: votes; Type: TABLE; Schema: public; Owner: paulheo
+-- Name: votes; Type: TABLE; Schema: public; Owner: timothyyuan
 --
 
 CREATE TABLE public.votes (
@@ -129,10 +147,10 @@ CREATE TABLE public.votes (
 );
 
 
-ALTER TABLE public.votes OWNER TO paulheo;
+ALTER TABLE public.votes OWNER TO timothyyuan;
 
 --
--- Name: votes_id_seq; Type: SEQUENCE; Schema: public; Owner: paulheo
+-- Name: votes_id_seq; Type: SEQUENCE; Schema: public; Owner: timothyyuan
 --
 
 CREATE SEQUENCE public.votes_id_seq
@@ -144,31 +162,31 @@ CREATE SEQUENCE public.votes_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.votes_id_seq OWNER TO paulheo;
+ALTER TABLE public.votes_id_seq OWNER TO timothyyuan;
 
 --
--- Name: votes_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: paulheo
+-- Name: votes_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: timothyyuan
 --
 
 ALTER SEQUENCE public.votes_id_seq OWNED BY public.votes.id;
 
 
 --
--- Name: candidates id; Type: DEFAULT; Schema: public; Owner: paulheo
+-- Name: candidates id; Type: DEFAULT; Schema: public; Owner: timothyyuan
 --
 
 ALTER TABLE ONLY public.candidates ALTER COLUMN id SET DEFAULT nextval('public.candidates_id_seq'::regclass);
 
 
 --
--- Name: votes id; Type: DEFAULT; Schema: public; Owner: paulheo
+-- Name: votes id; Type: DEFAULT; Schema: public; Owner: timothyyuan
 --
 
 ALTER TABLE ONLY public.votes ALTER COLUMN id SET DEFAULT nextval('public.votes_id_seq'::regclass);
 
 
 --
--- Data for Name: age; Type: TABLE DATA; Schema: public; Owner: paulheo
+-- Data for Name: age; Type: TABLE DATA; Schema: public; Owner: timothyyuan
 --
 
 COPY public.age (precinct_id, a, b, c, d, e, unknown) FROM stdin;
@@ -228,7 +246,7 @@ COPY public.age (precinct_id, a, b, c, d, e, unknown) FROM stdin;
 
 
 --
--- Data for Name: candidates; Type: TABLE DATA; Schema: public; Owner: paulheo
+-- Data for Name: candidates; Type: TABLE DATA; Schema: public; Owner: timothyyuan
 --
 
 COPY public.candidates (id, name, party) FROM stdin;
@@ -245,7 +263,67 @@ COPY public.candidates (id, name, party) FROM stdin;
 
 
 --
--- Data for Name: precincts; Type: TABLE DATA; Schema: public; Owner: paulheo
+-- Data for Name: party; Type: TABLE DATA; Schema: public; Owner: timothyyuan
+--
+
+COPY public.party (precinct_id, democratic, green, libertarian, other, republican, unaffiliated, peace_and_freedom) FROM stdin;
+832810.00	438	4	3	22	128	227	4
+832900.00	416	0	4	17	143	254	4
+833000.00	432	2	5	20	73	218	5
+833100.00	347	5	7	18	92	211	2
+833200.00	415	3	9	25	105	170	1
+833210.00	421	1	12	21	128	277	5
+833300.00	402	2	7	27	135	249	1
+833410.00	486	0	4	30	170	447	1
+833500.00	393	2	0	18	118	263	4
+833610.00	298	1	1	20	90	157	4
+833700.00	449	3	3	17	105	317	4
+833710.00	422	5	2	22	109	280	4
+835310.00	619	3	9	38	133	381	2
+835800.00	527	2	10	23	109	305	3
+835820.00	450	1	1	22	73	234	1
+835910.00	494	2	4	36	92	290	3
+836110.00	361	1	1	13	122	353	2
+836200.00	307	1	0	12	77	337	0
+836500.00	473	2	3	21	118	401	1
+836600.00	381	2	3	15	93	324	2
+836700.00	227	2	2	14	59	147	1
+837100.00	530	2	2	17	157	518	0
+837200.00	377	0	1	16	93	282	0
+837400.00	541	3	4	29	157	448	1
+837500.00	432	2	2	18	122	391	1
+837600.00	508	1	6	25	180	534	2
+837700.00	546	6	2	21	135	495	2
+837710.00	356	2	1	19	101	294	0
+838000.00	374	4	7	21	190	367	2
+838110.00	377	2	3	17	78	357	1
+838300.01	179	2	4	5	57	137	0
+838500.01	182	1	1	16	69	179	0
+838600.00	389	1	5	14	142	297	0
+838700.00	508	3	4	25	149	378	2
+839530.00	225	3	4	18	111	252	0
+850300.00	433	2	2	26	154	242	5
+850330.00	518	5	4	27	135	320	1
+850400.00	406	5	5	13	114	194	4
+850500.00	697	0	5	37	191	421	2
+850600.00	467	5	7	20	121	238	6
+850800.00	883	3	16	52	161	494	11
+850810.00	552	4	8	36	149	280	2
+851000.00	658	4	8	34	146	302	5
+851200.00	492	1	5	20	124	231	2
+851300.00	477	5	4	29	134	267	3
+851500.00	363	5	3	23	144	205	2
+851600.00	362	0	2	17	100	193	1
+851700.00	428	6	5	24	136	232	3
+851800.00	523	2	8	23	122	279	2
+852010.00	586	6	7	19	163	249	0
+852100.00	525	0	5	27	116	273	4
+832800.00	467	3	6	25	136	226	1
+\.
+
+
+--
+-- Data for Name: precincts; Type: TABLE DATA; Schema: public; Owner: timothyyuan
 --
 
 COPY public.precincts (id, city, county) FROM stdin;
@@ -305,7 +383,7 @@ COPY public.precincts (id, city, county) FROM stdin;
 
 
 --
--- Data for Name: race; Type: TABLE DATA; Schema: public; Owner: paulheo
+-- Data for Name: race; Type: TABLE DATA; Schema: public; Owner: timothyyuan
 --
 
 COPY public.race (precinct_id, african_american, asian, caucasian, hispanic, native_american, uncoded, unknown) FROM stdin;
@@ -365,7 +443,7 @@ COPY public.race (precinct_id, african_american, asian, caucasian, hispanic, nat
 
 
 --
--- Data for Name: sex; Type: TABLE DATA; Schema: public; Owner: paulheo
+-- Data for Name: sex; Type: TABLE DATA; Schema: public; Owner: timothyyuan
 --
 
 COPY public.sex (precinct_id, male, female, unknown) FROM stdin;
@@ -425,7 +503,7 @@ COPY public.sex (precinct_id, male, female, unknown) FROM stdin;
 
 
 --
--- Data for Name: votes; Type: TABLE DATA; Schema: public; Owner: paulheo
+-- Data for Name: votes; Type: TABLE DATA; Schema: public; Owner: timothyyuan
 --
 
 COPY public.votes (id, candidate_id, precinct_id, count) FROM stdin;
@@ -973,21 +1051,21 @@ COPY public.votes (id, candidate_id, precinct_id, count) FROM stdin;
 
 
 --
--- Name: candidates_id_seq; Type: SEQUENCE SET; Schema: public; Owner: paulheo
+-- Name: candidates_id_seq; Type: SEQUENCE SET; Schema: public; Owner: timothyyuan
 --
 
 SELECT pg_catalog.setval('public.candidates_id_seq', 9, true);
 
 
 --
--- Name: votes_id_seq; Type: SEQUENCE SET; Schema: public; Owner: paulheo
+-- Name: votes_id_seq; Type: SEQUENCE SET; Schema: public; Owner: timothyyuan
 --
 
 SELECT pg_catalog.setval('public.votes_id_seq', 540, true);
 
 
 --
--- Name: candidates candidates_pkey; Type: CONSTRAINT; Schema: public; Owner: paulheo
+-- Name: candidates candidates_pkey; Type: CONSTRAINT; Schema: public; Owner: timothyyuan
 --
 
 ALTER TABLE ONLY public.candidates
@@ -995,7 +1073,7 @@ ALTER TABLE ONLY public.candidates
 
 
 --
--- Name: precincts precincts_pkey; Type: CONSTRAINT; Schema: public; Owner: paulheo
+-- Name: precincts precincts_pkey; Type: CONSTRAINT; Schema: public; Owner: timothyyuan
 --
 
 ALTER TABLE ONLY public.precincts
@@ -1003,7 +1081,7 @@ ALTER TABLE ONLY public.precincts
 
 
 --
--- Name: votes votes_pkey; Type: CONSTRAINT; Schema: public; Owner: paulheo
+-- Name: votes votes_pkey; Type: CONSTRAINT; Schema: public; Owner: timothyyuan
 --
 
 ALTER TABLE ONLY public.votes
@@ -1011,7 +1089,7 @@ ALTER TABLE ONLY public.votes
 
 
 --
--- Name: age age_precinct_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: paulheo
+-- Name: age age_precinct_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: timothyyuan
 --
 
 ALTER TABLE ONLY public.age
@@ -1019,7 +1097,15 @@ ALTER TABLE ONLY public.age
 
 
 --
--- Name: race race_precinct_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: paulheo
+-- Name: party party_precinct_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: timothyyuan
+--
+
+ALTER TABLE ONLY public.party
+    ADD CONSTRAINT party_precinct_id_fkey FOREIGN KEY (precinct_id) REFERENCES public.precincts(id);
+
+
+--
+-- Name: race race_precinct_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: timothyyuan
 --
 
 ALTER TABLE ONLY public.race
@@ -1027,7 +1113,7 @@ ALTER TABLE ONLY public.race
 
 
 --
--- Name: sex sex_precinct_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: paulheo
+-- Name: sex sex_precinct_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: timothyyuan
 --
 
 ALTER TABLE ONLY public.sex
@@ -1035,7 +1121,7 @@ ALTER TABLE ONLY public.sex
 
 
 --
--- Name: votes votes_candidate_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: paulheo
+-- Name: votes votes_candidate_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: timothyyuan
 --
 
 ALTER TABLE ONLY public.votes
