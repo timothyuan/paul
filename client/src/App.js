@@ -21,7 +21,8 @@ class App extends React.Component{
       ageChartOptions: null,
       votes: null,
       registered: null,
-      demographics: [true, true, true]
+      demographics: [true, true, true],
+      filter: false
     };
   };
 
@@ -42,12 +43,41 @@ class App extends React.Component{
 
   getData = () => {
     axios.get('https://paul-nodeserver.herokuapp.com/votes', { params: { candidate_id : this.state.candidate_id, precinct_id : this.state.precinct_id}}).then(response => {
-      this.populateDemographics(response.data);
-      this.populateVotes(response.data);
+      var filter = this.filter(response.data);
+      this.populateDemographics(response.data, filter);
+      this.populateVotes(response.data, filter);
     });
   };
 
-  populateVotes = (data) => {
+  filter = (data) => {
+    let precincts = new Map();
+    data.map(result => {
+      if (!precincts.has(result.precinct_id)){
+        precincts.set(result.precinct_id, [[result.name, result.count]]);
+      } else {
+        precincts.get(result.precinct_id).push([result.name, result.count]);
+      }
+    });
+    if(!this.state.filter){
+      return precincts;
+    }
+    for(let [precinct, candidates] of precincts){
+      candidates.sort((a, b)=>b[1]-a[1]);
+      let found = false;
+      for (let i=0; i<3; i++){
+        if(candidates[i][0]=='Alex Lee'){
+          found = true;
+          break;
+        }
+      }
+      if(!found){
+        precincts.delete(precinct);
+      }
+    }
+    return precincts;
+  }
+
+  populateVotes = (data, filter) => {
     // initialize chart
     let chart = {
       labels: [],
@@ -71,19 +101,25 @@ class App extends React.Component{
     let candidates = new Map();
     let votes = 0;
     data.map(result => {
-      if (!candidates.has(result.name)){
-        candidates.set(result.name, result.count);
-      } else {
-        candidates.set(result.name, candidates.get(result.name)+result.count);
+      if(filter.has(result.precinct_id)){
+        if (!candidates.has(result.name)){
+          candidates.set(result.name, result.count);
+        } else {
+          candidates.set(result.name, candidates.get(result.name)+result.count);
+        }
+        votes+=result.count;
       }
-      votes+=result.count;
     });
     this.setState({votes});
 
     // format title and calculate turnout
     let chartTitle = 'Votes for ';
     if(this.state.precinct_id==null){
-      chartTitle += 'All Precincts: ';
+      if(!this.state.filter){
+        chartTitle += 'All Precincts: ';
+      }else{
+        chartTitle += 'Filtered Precincts: ';
+      }
     }else{
       chartTitle += 'Precinct ' + this.state.precinct_id + ': ';
     }
@@ -113,7 +149,7 @@ class App extends React.Component{
     });
   };
 
-  populateDemographics = (data) => {
+  populateDemographics = (data, filter) => {
     // initialize charts
     let partyChart = {
       labels: [],
@@ -186,7 +222,7 @@ class App extends React.Component{
     ]);
     let registered = 0;
     data.map(result => {
-      if (!precincts.has(result.precinct_id)) {
+      if (!precincts.has(result.precinct_id)&&filter.has(result.precinct_id)) {
         party.set('Democratic',party.get('Democratic')+result.democratic);
         party.set('Green',party.get('Green')+result.green);
         party.set('Libertarian',party.get('Libertarian')+result.libertarian);
@@ -360,6 +396,11 @@ class App extends React.Component{
     this.setState({demographics});
   };
 
+  toggleFilter = () => {
+    this.setState({filter: !this.state.filter});
+    this.getData();
+  };
+
   render(){
     const { precinctOptions } = this.state;
     var styles = {
@@ -387,6 +428,7 @@ class App extends React.Component{
             <ToggleButton value={1}>Age</ToggleButton>
             <ToggleButton value={2}>Party</ToggleButton>
           </ToggleButtonGroup>
+          <Button onClick = {this.toggleFilter}>Filter Top 3</Button>
         </div>
         <div style={styles.left}>
           {this.state.voteChart && <Pie data={this.state.voteChart} options={this.state.voteChartOptions}/>}
