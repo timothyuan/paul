@@ -86,13 +86,13 @@ class App extends React.Component{
         backgroundColor: [
           '#FF6384',
           '#FF944B',
-          '#FFCE56',
-          '#6FFF76',
-          '#73E9FE',
+          '#4A72D4',
+          '#11EB81',
+          '#F9C953',
           '#36A2EB',
-          '#7375FE',
-          '#A373FE',
-          '#FE73BD'
+          '#4BDBD9',
+          '#F25AB9',
+          '#A373FE'
         ]
       }]
     };
@@ -158,11 +158,11 @@ class App extends React.Component{
         backgroundColor: [
           '#FF6384',
           '#FF944B',
-          '#FFCE56',
-          '#6FFF76',
-          '#73E9FE',
+          '#4A72D4',
+          '#11EB81',
+          '#F9C953',
           '#36A2EB',
-          '#7375FE'
+          '#4BDBD9'
         ]
       }]
     };
@@ -173,9 +173,9 @@ class App extends React.Component{
         backgroundColor: [
           '#FF6384',
           '#FF944B',
-          '#FFCE56',
-          '#6FFF76',
-          '#73E9FE',
+          '#4A72D4',
+          '#11EB81',
+          '#F9C953',
           '#36A2EB'
         ]
       }]
@@ -187,9 +187,9 @@ class App extends React.Component{
         backgroundColor: [
           '#FF6384',
           '#FF944B',
-          '#FFCE56',
-          '#6FFF76',
-          '#73E9FE'
+          '#4A72D4',
+          '#11EB81',
+          '#F9C953'
         ]
       }]
     };
