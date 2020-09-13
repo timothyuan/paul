@@ -12,11 +12,11 @@ class App extends React.Component{
     super(props);
     this.state = {
       voteChart : null,
-      sexChart: null,
+      partyChart: null,
       raceChart: null,
       ageChart: null,
       voteChartOptions : null,
-      sexChartOptions: null,
+      partyChartOptions: null,
       raceChartOptions: null,
       ageChartOptions: null,
       votes: null,
@@ -115,14 +115,18 @@ class App extends React.Component{
 
   populateDemographics = (data) => {
     // initialize charts
-    let sexChart = {
+    let partyChart = {
       labels: [],
       datasets: [{
         data: [],
         backgroundColor: [
           '#FF6384',
           '#FF944B',
-          '#FFCE56'
+          '#FFCE56',
+          '#6FFF76',
+          '#73E9FE',
+          '#36A2EB',
+          '#7375FE'
         ]
       }]
     };
@@ -156,10 +160,14 @@ class App extends React.Component{
 
     // iterate through data
     let precincts = new Map();
-    let sex = new Map([
-      ['Male',0],
-      ['Female',0],
-      ['Unknown',0]
+    let party = new Map([
+      ['Democratic',0],
+      ['Green',0],
+      ['Libertarian',0],
+      ['Other',0],
+      ['Republican',0],
+      ['Unaffiliated',0],
+      ['Peace and Freedom',0]
     ]);
     let race = new Map([
       ['African American',0],
@@ -179,9 +187,13 @@ class App extends React.Component{
     let registered = 0;
     data.map(result => {
       if (!precincts.has(result.precinct_id)) {
-        sex.set('Male',sex.get('Male')+result.male);
-        sex.set('Female',sex.get('Female')+result.female);
-        sex.set('Unknown',sex.get('Unknown')+result.unknown);
+        party.set('Democratic',party.get('Democratic')+result.democratic);
+        party.set('Green',party.get('Green')+result.green);
+        party.set('Libertarian',party.get('Libertarian')+result.libertarian);
+        party.set('Other',party.get('Other')+result.other);
+        party.set('Republican',party.get('Republican')+result.republican);
+        party.set('Unaffiliated',party.get('Unaffiliated')+result.unaffiliated);
+        party.set('Peace and Freedom',party.get('Peace and Freedom')+result.peace_and_freedom);
         race.set('African American',race.get('African American')+result.african_american);
         race.set('Asian',race.get('Asian')+result.asian);
         race.set('Caucasian',race.get('Caucasian')+result.caucasian);
@@ -200,11 +212,11 @@ class App extends React.Component{
 
     // assign data to chart
     this.setState({registered});
-    sexChart.labels = Array.from(sex.keys());
-    sexChart.datasets[0].data = Array.from(sex.values());
-    this.setState({sexChart: sexChart});
+    partyChart.labels = Array.from(party.keys());
+    partyChart.datasets[0].data = Array.from(party.values());
+    this.setState({partyChart: partyChart});
     this.setState({
-      sexChartOptions:{
+      partyChartOptions:{
         plugins: {
           labels: {
             render:'value',
@@ -213,7 +225,7 @@ class App extends React.Component{
         },
         title: {
           display: true,
-          text: 'Sex'
+          text: 'Party'
         },
         legend:{
           display: true,
@@ -285,7 +297,7 @@ class App extends React.Component{
       }
     });
     this.setState({
-      sexChartOptions:{
+      partyChartOptions:{
         plugins:{
           labels:{
             render:type,
@@ -294,7 +306,7 @@ class App extends React.Component{
         },
         title: {
           display: true,
-          text: 'Sex'
+          text: 'Party'
         },
         legend:{
           display: true,
@@ -373,7 +385,7 @@ class App extends React.Component{
           <ToggleButtonGroup type='checkbox' onChange={this.toggleDemographics} defaultValue={[0,1,2]}>
             <ToggleButton value={0}>Race</ToggleButton>
             <ToggleButton value={1}>Age</ToggleButton>
-            <ToggleButton value={2}>Sex</ToggleButton>
+            <ToggleButton value={2}>Party</ToggleButton>
           </ToggleButtonGroup>
         </div>
         <div style={styles.left}>
@@ -382,7 +394,7 @@ class App extends React.Component{
         </div>
         <div style={styles.right}>
           {this.state.demographics[1] && this.state.ageChart && <Pie data={this.state.ageChart} options={this.state.ageChartOptions}/>}
-          {this.state.demographics[2] && this.state.sexChart && <Pie data={this.state.sexChart} options={this.state.sexChartOptions}/>}
+          {this.state.demographics[2] && this.state.partyChart && <Pie data={this.state.partyChart} options={this.state.partyChartOptions}/>}
         </div>
       </>
     );
