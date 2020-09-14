@@ -39,10 +39,11 @@ class App extends React.Component{
     }else{
       this.setState({precinct_id: selectedOption.value});
     }
+    this.setState({filter:false});
   };
 
   getData = () => {
-    axios.get('https://paul-nodeserver.herokuapp.com/votes', { params: { candidate_id : this.state.candidate_id, precinct_id : this.state.precinct_id}}).then(response => {
+    axios.get('https://paul-nodeserver.herokuapp.com/votes', { params: {precinct_id : this.state.precinct_id}}).then(response => {
       var filter = this.filter(response.data);
       this.populateDemographics(response.data, filter);
       this.populateVotes(response.data, filter);
@@ -428,7 +429,9 @@ class App extends React.Component{
             <ToggleButton value={1}>Age</ToggleButton>
             <ToggleButton value={2}>Party</ToggleButton>
           </ToggleButtonGroup>
-          <Button onClick = {this.toggleFilter}>Filter Top 3</Button>
+          <ToggleButtonGroup type='checkbox' onChange={this.toggleFilter}>
+            <ToggleButton disabled={this.state.precinct_id}>Filter Top 3</ToggleButton>
+          </ToggleButtonGroup>
         </div>
         <div style={styles.left}>
           {this.state.voteChart && <Pie data={this.state.voteChart} options={this.state.voteChartOptions}/>}
