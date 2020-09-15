@@ -21,8 +21,7 @@ class App extends React.Component{
       ageChartOptions: null,
       votes: null,
       registered: null,
-      demographics: [true, true, true],
-      filter: false
+      demographics: [true, true, true]
     };
   };
 
@@ -39,7 +38,11 @@ class App extends React.Component{
     }else{
       this.setState({precinct_id: selectedOption.value});
     }
-    this.setState({filter:false});
+    this.setState({selectedFilter:null});
+  };
+
+  handleFilter = (selectedFilter) => {
+    this.setState({selectedFilter});
   };
 
   getData = () => {
@@ -59,13 +62,13 @@ class App extends React.Component{
         precincts.get(result.precinct_id).push([result.name, result.count]);
       }
     });
-    if(!this.state.filter){
+    if(!this.state.selectedFilter){
       return precincts;
     }
     for(let [precinct, candidates] of precincts){
       candidates.sort((a, b)=>b[1]-a[1]);
       let found = false;
-      for (let i=0; i<3; i++){
+      for (let i=0; i<this.state.selectedFilter.value; i++){
         if(candidates[i][0]=='Alex Lee'){
           found = true;
           break;
@@ -116,10 +119,10 @@ class App extends React.Component{
     // format title and calculate turnout
     let chartTitle = 'Votes for ';
     if(this.state.precinct_id==null){
-      if(!this.state.filter){
+      if(!this.state.selectedFilter){
         chartTitle += 'All Precincts: ';
       }else{
-        chartTitle += 'Filtered Precincts: ';
+        chartTitle += `Filtered Precincts (${filter.size}): `;
       }
     }else{
       chartTitle += 'Precinct ' + this.state.precinct_id + ': ';
@@ -397,13 +400,18 @@ class App extends React.Component{
     this.setState({demographics});
   };
 
-  toggleFilter = () => {
-    this.setState({filter: !this.state.filter});
-    this.getData();
-  };
-
   render(){
     const { precinctOptions } = this.state;
+    const filterOptions = [
+      { value: 1, label: 'Top 1' },
+      { value: 2, label: 'Top 2' },
+      { value: 3, label: 'Top 3' },
+      { value: 4, label: 'Top 4' },
+      { value: 5, label: 'Top 5' },
+      { value: 6, label: 'Top 6' },
+      { value: 7, label: 'Top 7' },
+      { value: 8, label: 'Top 8' }
+    ]
     var styles = {
       left: {float:'left', width:'50%'},
       right: {float:'right', width:'50%'},
@@ -422,15 +430,22 @@ class App extends React.Component{
             options = {precinctOptions}
             />
           </div>
+          <div style={styles.fill}>
+            <Select
+            isClearable = {true}
+            placeholder = {'Filter by Alex Placement'}
+            onChange = {this.handleFilter}
+            options = {filterOptions}
+            value = {this.state.selectedFilter}
+            isDisabled = {this.state.precinct_id}
+            />
+          </div>
           <Button onClick = {this.getData}>Get Data</Button>
           <Button onClick = {this.togglePercentage} disabled = {!this.state.voteChartOptions}>Toggle Percentage</Button>
           <ToggleButtonGroup type='checkbox' onChange={this.toggleDemographics} defaultValue={[0,1,2]}>
             <ToggleButton value={0}>Race</ToggleButton>
             <ToggleButton value={1}>Age</ToggleButton>
             <ToggleButton value={2}>Party</ToggleButton>
-          </ToggleButtonGroup>
-          <ToggleButtonGroup type='checkbox' onChange={this.toggleFilter}>
-            <ToggleButton disabled={this.state.precinct_id}>Filter Top 3</ToggleButton>
           </ToggleButtonGroup>
         </div>
         <div style={styles.left}>
