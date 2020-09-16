@@ -38,7 +38,6 @@ class App extends React.Component{
     }else{
       this.setState({precinct_id: selectedOption.value});
     }
-    this.setState({selectedFilter:null});
   };
 
   handleFilter = (selectedFilter) => {
@@ -50,10 +49,27 @@ class App extends React.Component{
       var filter = this.filter(response.data);
       this.populateDemographics(response.data, filter);
       this.populateVotes(response.data, filter);
+      // should not filter precinct options if one is selected
+      if (!this.state.precinct_id){
+        // reset precinctOptions for dropdown
+        axios.get('https://paul-nodeserver.herokuapp.com/precincts').then(response => {
+          let precinctOptions = response.data.map(precinct => ({value: precinct.id, label: precinct.id+', '+precinct.city+', '+precinct.county}));
+          // filter precinctOptions for dropdown
+          if(this.state.selectedFilter){
+            for (let i=precinctOptions.length-1;i>=0;i--){
+              if(!filter.has(precinctOptions[i].value)){
+                precinctOptions.splice(i,1);
+              }
+            }
+          }
+          this.setState({precinctOptions});
+        });
+      }
     });
   };
 
   filter = (data) => {
+    // create a map of all precincts
     let precincts = new Map();
     data.map(result => {
       if (!precincts.has(result.precinct_id)){
@@ -401,7 +417,6 @@ class App extends React.Component{
   };
 
   render(){
-    const { precinctOptions } = this.state;
     const filterOptions = [
       { value: 1, label: 'Top 1' },
       { value: 2, label: 'Top 2' },
@@ -427,7 +442,7 @@ class App extends React.Component{
             isClearable = {true}
             placeholder = {'Select Precinct'}
             onChange = {this.handlePrecinct}
-            options = {precinctOptions}
+            options = {this.state.precinctOptions}
             />
           </div>
           <div style={styles.fill}>
@@ -436,7 +451,6 @@ class App extends React.Component{
             placeholder = {'Filter by Alex Placement'}
             onChange = {this.handleFilter}
             options = {filterOptions}
-            value = {this.state.selectedFilter}
             isDisabled = {this.state.precinct_id}
             />
           </div>
